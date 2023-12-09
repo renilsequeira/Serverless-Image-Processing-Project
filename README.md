@@ -149,3 +149,233 @@ With this setup, we can process images in various formats simultaneously, making
 ### Step Complete:
 
 You have successfully created three Amazon SQS queues and subscribed them to the `resize-image-topic` SNS topic for receiving image resizing notifications.
+
+## Step 3: Create an Amazon S3 Event Notification
+
+### Step 3.1: Configure Amazon SNS Access Policy 📝
+
+**Objective:** Configure the Amazon SNS access policy to allow the Amazon S3 bucket to publish to the topic.
+
+1. **Access the AWS Management Console:**
+
+2. **Navigate to Simple Notification Service (SNS):**
+   - From the left navigation menu, choose "Topics."
+   - Select Resize Image Topic:
+     - Choose the `resize-image-topic` topic created earlier.
+     
+4. **Edit Topic Access Policy:**
+   - Choose "Edit."
+   
+5. **Access Policy Configuration:**
+   - In the Access policy section, expand it if necessary.
+   
+6. **Update Access Policy JSON:**
+   - Delete the existing content from the JSON editor.
+   - Copy and paste the provided code block into the JSON Editor section (replace placeholders).
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Id": "__default_policy_ID",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Principal": {
+           "Service": "s3.amazonaws.com"
+         },
+         "Action": "SNS:Publish",
+         "Resource": "arn:aws:sns:region:account-id:resize-image-topic-xxxx",
+         "Condition": {
+           "ArnLike": {
+             "aws:SourceArn": "arn:aws:s3:::your-ingest-bucket-name"
+           }
+         }
+       }
+     ]
+   }
+   
+Replace placeholders:
+
+Replace region with your AWS region, account-id with your AWS account ID.
+Replace your-ingest-bucket-name with the name of your ingest S3 bucket.
+Save Changes:
+
+Choose "Save."
+Note:
+
+Ensure that you replace placeholders such as region, account-id, and your-ingest-bucket-name with your specific AWS region, account ID, and S3 bucket name.
+This configuration allows the specified S3 bucket to publish events to the SNS topic.
+
+
+## Step 3.2: Create an S3 Event Notification for Uploads to the Ingest S3 Bucket 🚀
+
+2. **Navigate to Amazon S3:**
+
+   - On the Buckets page, choose the bucket hyperlink with a name like `xxxxx-bucket-xxxxx`.
+
+4. **Access Bucket Properties:**
+   - Choose the "Properties" tab.
+
+5. **Scroll to Event Notifications Section:**
+   - Scroll down to the "Event notifications" section.
+
+6. **Create Event Notification:**
+   - Choose "Create event notification."
+
+7. **Configure General Settings:**
+   - In the General configuration section:
+      - Event name: Enter `resize-image-event`.
+      - Prefix - optional: Enter `ingest/`.
+      - Suffix - optional: Enter `.jpg`.
+
+8. **Configure Event Types:**
+   - In the Event types section, select "All object create events."
+
+9. **Configure Destination Settings:**
+   - In the Destination section, configure the following:
+      - Destination: Select "SNS topic."
+      - Specify SNS topic: Select "Choose from your SNS topics."
+      - SNS topic: Choose the `resize-image-topic` SNS topic from the dropdown menu.
+
+10. **Alternative Option:**
+   - If you prefer to specify an ARN, choose "Enter ARN" and enter the ARN you copied in Task 1.
+
+11. **Save Changes:**
+    - Choose "Save changes."
+
+12. **Verify Notification Creation:**
+    - Check for the expected service output message:
+      ```csharp
+      Successfully created event notification “resize-image-event”.
+      ```
+
+### Step Complete:
+You have successfully created an Amazon S3 event notification for object create events with specific filters, directing notifications to the `resize-image-topic` SNS topic.
+
+
+## Step 4: Create and Configure Three AWS Lambda Functions
+
+### Step 4.1: Create a Lambda Function to Generate a Thumbnail
+
+**Objective:** Create an AWS Lambda function with an SQS trigger to generate a thumbnail.
+
+
+2. **Navigate to AWS Lambda:**
+
+3. **Create Lambda Function:**
+   - Choose "Create function."
+
+4. **Configure Basic Information:**
+   - In the "Create function" window, select "Author from scratch."
+   - In the Basic information section, configure the following:
+      - Function name: Enter `CreateThumbnail`.
+      - Runtime: Choose `Python 3.9`.
+
+5. **Change Default Execution Role:**
+   - Expand the "Change default execution role" section.
+   - Select "Use an existing role."
+   - Choose the role with a name like `xxxxx-LabExecutionRole-xxxxx`.
+     - Note: This role provides necessary permissions for Lambda to access Amazon S3 and Amazon SQS.
+
+6. **Create Lambda Function:**
+   - Choose "Create function."
+
+7. **Verify Creation:**
+   - Check for the expected service output message:
+     ```vbnet
+     Successfully created the function CreateThumbnail. You can now change its code and configuration. To invoke your function with a test event, choose “Test”.
+     ```
+
+### Step Complete:
+You have successfully created an AWS Lambda function named CreateThumbnail with the necessary configuration.
+
+## Step 4.2: Configure Lambda Function with SQS Trigger and Upload Deployment Package 
+
+**Objective:** Add an SQS trigger to the Lambda function and upload the Python deployment package.
+
+1. **Access the AWS Lambda Console:**
+   - Open the AWS Lambda console.
+
+2. **Navigate to CreateThumbnail Lambda Function:**
+   - Select the "CreateThumbnail" Lambda function that you created.
+
+3. **Add SQS Trigger:**
+   - Choose "Add trigger."
+   - Configure the following:
+      - Select a trigger: Choose "SQS."
+      - SQS Queue: Choose "thumbnail-queue."
+      - Batch Size: Enter 1.
+   - Scroll to the bottom of the page and choose "Add."
+
+4. **Verify Trigger Addition:**
+   - Check for the expected service output message:
+     ```
+     The trigger thumbnail-queue was successfully added to function CreateThumbnail. The trigger is in a disabled state.
+     ```
+
+5. **Configure Lambda Function Code:**
+   - Choose the "Code" tab.
+   - Instead of manually entering code, you'll upload it as a deployment package.
+
+6. **Upload Deployment Package:**
+   - Follow these steps to upload the deployment package:
+      - Save the provided file (CreateThumbnail.zip) to your computer.
+      - Open the "Upload from" menu and choose ".zip file."
+      - Choose the "Upload" button, navigate to and select the deployment package you saved.
+      - Choose "Save."
+
+7. **Verify Package Upload:**
+   - Check for the expected service output message:
+     ```bash
+     Successfully updated the function CreateThumbnail.
+     ```
+   - Note: The provided CreateThumbnail.zip file contains the Lambda function code. Do not copy this code; it's just an example to show what's in the zip file.
+
+### Step Complete:
+You have successfully configured the Lambda function with an SQS trigger and uploaded the deployment package.
+
+
+## Step 4.3: Configure Lambda Function Runtime Settings and Description
+
+**Objective:** Configure the runtime settings and description for the Lambda function.
+
+1. **Access the AWS Lambda Console:**
+
+2. **Navigate to CreateThumbnail Lambda Function:**
+   - Select the "CreateThumbnail" Lambda function that you created.
+
+3. **Edit Runtime Settings:**
+   - In the "Runtime settings" section, choose "Edit."
+   - In the "Handler" text field, enter `CreateThumbnail.handler`.
+     - Caution: Make sure the Handler field is set to this value; otherwise, the Lambda function will not be found.
+   - Choose "Save."
+
+4. **Verify Runtime Settings Update:**
+   - Check for the expected service output message:
+     ```bash
+     Successfully updated the function CreateThumbnail.
+     ```
+
+5. **Navigate to General Configuration:**
+   - Choose the "Configuration" tab.
+   - Choose "General configuration" from the panel on the left side of the screen.
+
+6. **Edit Description:**
+   - Choose "Edit."
+   - In the "Description" text field, enter: "Create a thumbnail-sized image."
+   - Leave the other settings at their default values.
+   - Save Description Changes: Choose "Save."
+
+7. **Verify Description Update:**
+   - Check for the expected service output message:
+     ```bash
+     Successfully updated the function CreateThumbnail.
+     ```
+
+### Step Complete:
+You have successfully configured the runtime settings and description for the Lambda function. 
+
+
+
+
+
