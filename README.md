@@ -6,7 +6,9 @@ This project implements a serverless architecture using AWS services, leveraging
 
 # Image Processing Workflow Overview
 
-![Image Processing Workflow Overview](Overview.jpg)
+<img width="1122" alt="Overview" src="https://github.com/renilsequeira/serverless-sns-sqs-lambda/assets/77531126/d19feaba-87f9-4b29-a806-e95431bef513">
+
+
 
 ## User Uploads Image to S3 Bucket:
 
