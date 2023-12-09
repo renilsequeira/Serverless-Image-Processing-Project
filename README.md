@@ -6,7 +6,7 @@ This project implements a serverless architecture using AWS services, leveraging
 
 # Image Processing Workflow Overview
 
-![Image Processing Workflow Overview](Overview.png)
+![Image Processing Workflow Overview](Overview.jpg)
 
 ## User Uploads Image to S3 Bucket:
 
