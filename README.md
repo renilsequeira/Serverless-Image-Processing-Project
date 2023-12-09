@@ -2,7 +2,11 @@
 
 ## Project Overview
 
-This project implements a serverless architecture using AWS services, leveraging Simple Notification Service (SNS), Simple Queue Service (SQS), and AWS Lambda. The architecture is designed to facilitate asynchronous communication and efficient event processing in a scalable and cost-effective manner.
+This project uses Amazon's serverless tools – SNS, SQS, and Lambda – to efficiently handle image processing tasks. By replacing old-school EC2 instances with Lambda functions, it shows how modern, event-driven solutions can simplify work, cut costs, and use resources smartly. Dive in to see how SNS, SQS, and Lambda work together for a responsive and budget-friendly image processing setup.
+
+Architecture Overview
+
+In this architecture, the process begins with a user uploading an image to an Amazon S3 bucket. This action triggers an S3 event notification, which is then sent to an SNS topic. The SNS topic efficiently distributes notifications to three SQS queues. These queues, in turn, trigger Lambda functions responsible for resizing the image into various formats. The final resized images are saved back to the S3 bucket, completing the workflow.
 
 ## Image Processing Workflow Overview
 
@@ -376,6 +380,139 @@ You have successfully configured the Lambda function with an SQS trigger and upl
 You have successfully configured the runtime settings and description for the Lambda function. 
 
 
+## Lab Task 4.4: Create and Configure Two More Lambda Functions
+
+### Lambda Function for Web Image
+
+**Objective:** Create and configure a Lambda function for generating web-sized images.
+
+1. **Create Lambda Function:**
+   - Follow these steps to create a Lambda function named `CreateWebImage` with the following configurations:
+      - Function name: Enter `CreateWebImage`.
+      - Runtime: Choose Python 3.9.
+      - Execution role: Choose the existing role with a name like `xxxxx-LabExecutionRole-xxxxx`.
+      - Select a trigger: Choose SQS.
+      - SQS Queue: Choose `web-queue`.
+      - Batch Size: Enter 1.
+   - Download and save the provided zip file (`CreateWebImage.zip`) to your computer.
+   - Upload the zip file using the Lambda console.
+   - Choose "Save."
+
+2. **Configure Runtime Settings:**
+   - In the "Runtime settings" section, choose "Edit."
+   - In the "Handler" text field, enter `CreateWebImage.handler`.
+   - In the "Description" text field, enter "Create a web-sized image."
+   - Choose "Save."
+
+### Lambda Function for Mobile Image
+
+**Objective:** Create and configure a Lambda function for generating mobile-sized images.
+
+1. **Create Lambda Function:**
+   - Follow these steps to create a Lambda function named `CreateMobileImage` with the following configurations:
+      - Function name: Enter `CreateMobileImage`.
+      - Runtime: Choose Python 3.9.
+      - Execution role: Choose the existing role with a name like `xxxxx-LabExecutionRole-xxxxx`.
+      - Select a trigger: Choose SQS.
+      - SQS Queue: Choose `mobile-queue`.
+      - Batch Size: Enter 1.
+   - Download and save the provided zip file (`CreateMobileImage.zip`) to your computer.
+   - Upload the zip file using the Lambda console.
+   - Choose "Save."
+
+2. **Configure Runtime Settings:**
+   - In the "Runtime settings" section, choose "Edit."
+   - In the "Handler" text field, enter `CreateMobileImage.handler`.
+   - In the "Description" text field, enter "Create a mobile-sized image."
+   - Choose "Save."
+
+### Task Complete:
+You have successfully created and configured Lambda functions for generating web and mobile images. 
 
 
+## Step 5: Upload an Object to the Amazon S3 Bucket
+
+**Objective:** Upload an image object to the S3 bucket using the S3 console.
+
+### Download an Image:
+
+Download one of the following images to test your architecture:
+- AWS logo: [AWS.jpg](path-to-image/AWS.jpg)
+- Mona Lisa: [MonaLisa.jpg](path-to-image/MonaLisa.jpg)
+- Happy Face: [HappyFace.jpg](path-to-image/HappyFace.jpg)
+
+Save the file with a name similar to `InputFile.jpg`.
+
+*Caution: Ensure that the file is saved with a .jpg extension, not .jpeg.*
+
+### Access the S3 Management Console:
+
+### Navigate to the Bucket and Folder:
+
+1. In the S3 Management Console, choose the `xxxxx-bucket-xxxxx` bucket hyperlink.
+2. create the folder eg : `ingest/`.
+
+### Upload Image:
+
+1. Choose "Upload."
+2. In the Upload window, choose "Add files."
+3. Browse to and choose the downloaded .jpg image file.
+4. Choose "Upload."
+
+### Verify Upload:
+
+Check for the expected service output message:
+```
+Upload succeeded.
+```
+# Project XYZ
+
+## Step 6: Validate the Processed File
+
+### Step 6.1: Search Amazon CloudWatch Logs for Lambda Activity
+
+**Objective:** Access and review Amazon CloudWatch Logs for Lambda activity.
+
+1. **Access the AWS Lambda Console:**
+   - Open the AWS Lambda console.
+
+2. **Choose Lambda Function:**
+   - Choose the hyperlink for one of your `Create-` functions (e.g., CreateThumbnail).
+
+3. **Navigate to the Monitor Tab:**
+   - Choose the "Monitor" tab.
+
+4. **View CloudWatch Logs:**
+   - The console displays graphs showing different metrics.
+   - Choose "View CloudWatch logs."
+
+5. **Choose Log Stream:**
+   - Choose the hyperlink for the Log stream with the most recent timestamp.
+
+6. **Expand Log Messages:**
+   - Expand each message to view the log message details.
+   - The REPORT line provides details like RequestId, Duration, Billed Duration, Memory Size, Max Memory Used, and Init Duration.
+
+### Step 6.2: Validate the S3 Bucket for Processed Files
+
+**Objective:** Access and validate the S3 bucket to confirm processed files.
+
+1. **Access the S3 Management Console:**
+   - Open the AWS Management Console.
+   - In the search box, search for and select "S3."
+
+2. **Navigate to Bucket and Folders:**
+   - Choose the hyperlink for `xxxxx-bucket-xxxxx` to enter the bucket.
+
+3. **Verify Processed Files:**
+   - You should now see three new folders: `thumbnail`, `web`, and `mobile`.
+   - Navigate through these folders to find the resized images (e.g., `Thumbnail-AWS.jpg`, `WebImage-HappyFace.jpg`, `MobileImage-MonaLisa.jpg`).
+
+**Validation:**
+   - If you find the resized images in these folders, you have successfully resized the image from its original to three different formats.
+
+**Step Complete:** You have successfully validated the processed image file from the logs generated by the function code through Amazon CloudWatch Logs.
+
+Conclusion
+Congratulations! You have successfully implemented a serverless image processing project with AWS services. Feel free further customize the project based on your requirements.
 
