@@ -1,4 +1,4 @@
-# Serverless AWS Architecture with SNS, SQS, and Lambda 🚀
+# Serverless Image Processing Project with AWS SNS, SQS, and Lambda 🚀
 
 ## Project Overview 🌐
 
@@ -170,6 +170,7 @@ With this setup, we can process images in various formats simultaneously, making
      Queue mobile-queue created successfully.
      Subscribed successfully to topic arn:aws:sns:region:account-id:resize-image-topic-xxxx.
      ```
+![3SQS_Queue](https://github.com/renilsequeira/serverless-sns-sqs-lambda/assets/77531126/405250a6-732a-4084-b313-e4ad3f334f1b)
 
 **Step Complete:**
 You have successfully created three Amazon SQS queues and subscribed them to the `resize-image-topic` SNS topic for receiving image resizing notifications.
@@ -518,6 +519,9 @@ You have successfully configured the runtime settings and description for the La
 
 **Task Complete:**
 You have successfully created and configured Lambda functions for generating web and mobile images.
+
+![lambda_function_image](https://github.com/renilsequeira/serverless-sns-sqs-lambda/assets/77531126/38afa05e-2faf-4ed3-8f3f-242d3e7f8692)
+
 
 ## Step 5: Upload an Object to the Amazon S3 Bucket
 
