@@ -607,7 +607,7 @@ Upload succeeded.
 
 # Conclusion
 
-Congratulations! You've successfully implemented a serverless image processing project with AWS services. Feel free to customize the project based on your requirements. If you have any questions or need assistance, don't hesitate to reach out. I'm here to help! 🤝💬
+Congratulations! You've successfully implemented a serverless image processing project with AWS services. Feel free to customize the project based on your requirements. If you have any questions or need assistance, don't hesitate to reach out. I'm here to help! 🤝
 
 
 
